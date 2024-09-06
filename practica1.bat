@@ -1,5 +1,10 @@
 @echo off
-:menu
+
+Color 3F
+
+REM menú de entrada para el usuario agregando las multiples opciones.
+
+: menu
 cls
 echo =======================
 echo  Gestor de Horarios
@@ -11,22 +16,25 @@ echo 4. Eliminar Todo el Horario
 echo 5. Guardar Horario en PDF
 echo 6. Salir
 echo =======================
-set /p choice="Elija una opción: "
+set /p var="Elija una opcion: "
 
-if "%choice%"=="1" goto agregar
-if "%choice%"=="2" goto eliminar
-if "%choice%"=="3" goto mostrar
-if "%choice%"=="4" goto eliminar_todo
-if "%choice%"=="5" goto guardar_pdf
-if "%choice%"=="6" exit
+REM Condicionales para la seleccion de alguna opcion marcada en el menú y una vez seleccionada redireccionar a la etiqueta correspondiente
+
+if "%var%"=="1" goto agregar
+if "%var%"=="2" goto eliminar
+if "%var%"=="3" goto mostrar
+if "%var%"=="4" goto eliminar_todo
+if "%var%"=="5" goto guardar_pdf
+if "%var%"=="6" exit
 
 goto menu
+
+REM una vez ingresados los dato se almacenan en un archivo txt
 
 :agregar
 cls
 set /p materia="Ingrese el nombre de la materia: "
 set /p hora="Ingrese el horario (Ej: 3:00-4:00): "
-rem Formatear la salida con la materia y hora con alineación
 echo %materia%             %hora% >> horario.txt
 echo Materia y horario agregados!
 pause
@@ -42,11 +50,19 @@ echo Materia eliminada!
 pause
 goto menu
 
+REM una vez impreso el mensaje en el encabezado de la tabla se agrega un for para mostrar los datos almacenados previamente
+
 :mostrar
 cls
-echo ======= Horario =======
-type horario.txt
-echo =======================
+echo ================ Horario =================
+echo Materia	    Horario
+echo ==========================================
+for /f "tokens=1,* delims= " %%a in (horario.txt) do (
+    set "materia=%%a"
+    set "horario=%%b"
+    echo %%a        %%b
+)
+echo ==========================================
 pause
 goto menu
 
@@ -66,7 +82,9 @@ goto menu
 :guardar_pdf
 cls
 echo Guardando en PDF...
-rem Este paso depende de tener una herramienta de conversión o la impresora "Microsoft Print to PDF"
+
+REM Este paso depende de tener una herramienta de conversión
+
 notepad.exe /p horario.txt
 pause
 goto menu
